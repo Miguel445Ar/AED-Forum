@@ -1,15 +1,17 @@
 import mysql, { MysqlError } from "mysql";
+import { DbConfig } from "../utils/db-config.interface";
 
-const connection = mysql.createConnection({
-    host: process.env.MYSQL_DB_HOST,
-    user: process.env.MYSQL_DB_USER,
-    password: process.env.MYSQL_DB_PASSWORD,
-    port: parseInt(process.env.MYSQL_DB_PORT, null),
-    database: process.env.MYSQL_DB_DATABASE
-});
 
-export default {
-    query(sql: string, args?: any): Promise<any | MysqlError> {
+export default (function dbConf(): DbConfig {
+    const connection = mysql.createConnection({
+        host: process.env.MYSQL_DB_HOST,
+        user: process.env.MYSQL_DB_USER,
+        password: process.env.MYSQL_DB_PASSWORD,
+        port: parseInt(process.env.MYSQL_DB_PORT, null),
+        database: process.env.MYSQL_DB_DATABASE
+    });
+
+   function query(sql: string, args?: any): Promise<any | MysqlError> {
         return new Promise((resolve, reject) => {
             connection.query(sql,args,(err: MysqlError, result: any) => {
                 if(err) {
@@ -19,8 +21,8 @@ export default {
                 resolve(result);
             });
         });
-    },
-    close(): Promise<string | MysqlError> {
+    }
+    function close(): Promise<string | MysqlError> {
         return new Promise((resolve, reject) => {
             connection.end( (err: MysqlError) => {
                 if(err) {
@@ -31,4 +33,5 @@ export default {
             });
         });
     }
-}
+    return { query, close } as DbConfig;
+})();

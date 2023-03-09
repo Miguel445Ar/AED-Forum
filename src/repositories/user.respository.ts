@@ -1,7 +1,7 @@
 import dbConnection from "../db/dbConnection";
 import { User } from "../models/user.model";
 
-export class UserRepository {
+export abstract class UserRepository {
     static async saveUser(user: User): Promise<any> {
         const role: string = user.role as string;
         return await dbConnection.query(`INSERT INTO users VALUES(${user.id},
