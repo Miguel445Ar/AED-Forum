@@ -3,6 +3,7 @@ import * as core from "express-serve-static-core";
 import dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import EmailController from "./controllers/email.controller";
 import { Person } from "./proto-models/user_pb";
+import UserController from "./controllers/user.controller";
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.get("/users", (req, res) => {
     const data: Uint8Array = user.toBinary();
     res.type("binary").send(data);
 })
+
+app.use("/auth", UserController);
 
 app.post("/email", EmailController.sendMailToAdmin);
 

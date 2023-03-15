@@ -2,13 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 class User {
-    constructor(id, username, email, password, role) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
+    constructor(_id, _username, _email, _password, _role) {
+        this._id = _id;
+        this._username = _username;
+        this._email = _email;
+        this._password = _password;
+        this._role = _role;
     }
+    get id() { return this._id; }
+    get username() { return this._username; }
+    get email() { return this._email; }
+    get password() { return this._password; }
+    get role() { return this._role; }
 }
 exports.User = User;
 //# sourceMappingURL=user.model.js.map

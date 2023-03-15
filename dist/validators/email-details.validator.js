@@ -10,7 +10,7 @@ class EmailDetailsValidator {
         if (mailSender === null || mailSender === undefined || passwordSender === null ||
             passwordSender === undefined && subject === null || subject === undefined ||
             description === null || description === undefined) {
-            response.addError("Is missing one property, check api doc");
+            response.addError("Is missing one or more properties, check api doc");
             return response;
         }
         let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
