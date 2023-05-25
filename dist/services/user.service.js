@@ -10,18 +10,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
+const user_model_1 = require("../models/user.model");
 const user_respository_1 = require("../repositories/user.respository");
+const http_status_enum_1 = require("../utils/http-status.enum");
+const user_request_validator_1 = require("../validators/user-request.validator");
 class UserService {
     static saveUser(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            //const response: CustomResponse<UserResponse> = UserRequestValidator.validate(request);
-            //if(response.hasErrors()) {
-            //return [response.toDto(), HTTP_STATUS.BAD_REQUEST];
-            //}
-            const newId = yield user_respository_1.UserRepository.getNewId();
-            console.log(newId);
-            //const result = await UserRepository.saveUser(new User((newId || 0),request.username, request.email, request.password, request.role));
-            //return newId;
+            const response = user_request_validator_1.UserRequestValidator.validate(request);
+            if (response.hasErrors()) {
+                return [response.toDto(), http_status_enum_1.HTTP_STATUS.BAD_REQUEST];
+            }
+            const newIdQueryResult = yield user_respository_1.UserRepository.getNewId();
+            const newId = newIdQueryResult[0][0]['NEW_ID'];
+            const result = yield user_respository_1.UserRepository.saveUser(new user_model_1.User((newId || 1), request.username, request.email, request.password, request.role));
         });
     }
 }

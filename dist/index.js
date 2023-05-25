@@ -5,10 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv")); // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv_1.default.config();
 const email_controller_1 = __importDefault(require("./controllers/email.controller"));
 const user_pb_1 = require("./proto-models/user_pb");
 const user_controller_1 = __importDefault(require("./controllers/user.controller"));
-dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = parseInt(process.env.SERVER_PORT, null);
 /*app.get("/", (req,res) => {

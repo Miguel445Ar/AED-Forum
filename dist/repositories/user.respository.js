@@ -18,31 +18,32 @@ class UserRepository {
     static saveUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             const role = user.role;
-            return yield dbConnection_1.default.query(`INSERT INTO users VALUES(${user.id},
+            return yield (yield dbConnection_1.default).query(`INSERT INTO ${UserRepository.tableName} VALUES(${user.id},
             ${user.username}),${user.email},${user.password},${role});`);
         });
     }
     static findUserByCredentials(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield dbConnection_1.default.query(`SELECT * FROM users where users.email = ${email}
+            return yield (yield dbConnection_1.default).query(`SELECT * FROM ${UserRepository.tableName} where users.email = ${email}
          and users.password = ${password}`);
         });
     }
     static getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield dbConnection_1.default.query(`SELECT * FROM users`);
+            return yield (yield dbConnection_1.default).query(`SELECT * FROM ${UserRepository.tableName}`);
         });
     }
     static deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield dbConnection_1.default.query(`DELETE FROM users where id = ${id};`);
+            return yield (yield dbConnection_1.default).query(`DELETE FROM ${UserRepository.tableName} where id = ${id};`);
         });
     }
     static getNewId() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield dbConnection_1.default.query(`SELECT MAX(id)+1 FROM users`);
+            return yield (yield dbConnection_1.default).query(`SELECT MAX(id)+1 AS NEW_ID FROM ${UserRepository.tableName}`);
         });
     }
 }
 exports.UserRepository = UserRepository;
+UserRepository.tableName = "aed.users";
 //# sourceMappingURL=user.respository.js.map
