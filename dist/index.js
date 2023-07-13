@@ -9,6 +9,7 @@ dotenv_1.default.config();
 const email_controller_1 = __importDefault(require("./controllers/email.controller"));
 const user_pb_1 = require("./proto-models/user_pb");
 const user_controller_1 = __importDefault(require("./controllers/user.controller"));
+const user_auth_middleware_1 = require("./middlewares/user-auth.middleware");
 const app = (0, express_1.default)();
 const PORT = parseInt(process.env.SERVER_PORT, null);
 /*app.get("/", (req,res) => {
@@ -23,8 +24,8 @@ app.get("/users", (req, res) => {
     const data = user.toBinary();
     res.type("binary").send(data);
 });
-app.use("/auth", user_controller_1.default);
-app.post("/email", email_controller_1.default.sendMailToAdmin);
+app.use("/users", user_controller_1.default);
+app.post("/email", user_auth_middleware_1.auth, email_controller_1.default.sendMailToAdmin);
 app.listen(PORT, () => {
     // console.log(`Server running on port ${PORT}`);
     process.stdout.write(`Server running on port ${PORT}\n`);

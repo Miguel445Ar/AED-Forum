@@ -12,42 +12,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRepository = void 0;
+exports.BaseRepository = void 0;
 const dbConnection_1 = __importDefault(require("../db/dbConnection"));
-class UserRepository {
-    static saveUser(user) {
+class BaseRepository {
+    constructor(tableName) {
+        this.tableName = tableName;
+    }
+    save(model) {
         return __awaiter(this, void 0, void 0, function* () {
-            const role = user.role;
-            return yield (yield dbConnection_1.default).query(`INSERT INTO ${UserRepository.tableName} VALUES(${user.id},
-            '${user.username}','${user.email}','${user.password}','${role}');`);
+            return yield (yield dbConnection_1.default).query(`INSERT INTO ${this.tableName} ${model.toQuery()}`);
         });
     }
-    static findUserByCredentials(email, password) {
+    getAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (yield dbConnection_1.default).query(`SELECT * FROM ${UserRepository.tableName} where users.email = '${email}'`);
+            return yield (yield dbConnection_1.default).query(`SELECT * FROM ${this.tableName}`);
         });
     }
-    static getAllUsers() {
+    saveAll(models) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (yield dbConnection_1.default).query(`SELECT * FROM ${UserRepository.tableName}`);
+            let queries = "";
+            models.forEach((model) => { queries = queries.concat(`INSERT INTO ${this.tableName} ${model.toQuery()};`); });
+            return yield (yield dbConnection_1.default).execute(queries);
         });
     }
-    static deleteUserById(id) {
+    getNewId() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (yield dbConnection_1.default).query(`DELETE FROM ${UserRepository.tableName} where id = ${id};`);
+            return yield (yield dbConnection_1.default).query(`SELECT MAX(id)+1 AS NEW_ID FROM ${this.tableName}`);
         });
     }
-    static getNewId() {
+    complete() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (yield dbConnection_1.default).query(`SELECT MAX(id)+1 AS NEW_ID FROM ${UserRepository.tableName}`);
-        });
-    }
-    static getUserByEmail(email) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield dbConnection_1.default).query(`SELECT * FROM ${UserRepository.tableName} WHERE email = '${email}';`);
+            return (yield dbConnection_1.default).commit();
         });
     }
 }
-exports.UserRepository = UserRepository;
-UserRepository.tableName = "aed.users";
-//# sourceMappingURL=user.respository.js.map
+exports.BaseRepository = BaseRepository;
+//# sourceMappingURL=base-repository.repository.js.map

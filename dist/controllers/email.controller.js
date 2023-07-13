@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const email_service_1 = __importDefault(require("../services/email.service"));
 const sendMailToAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const body = req.body;
+    const body = res.body;
     const [response, status] = yield email_service_1.default.sendMail(body);
     res.status(status).send(response);
 });

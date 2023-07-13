@@ -9,16 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const user_service_1 = require("../services/user.service");
-const router = (0, express_1.Router)();
-router.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield user_service_1.UserService.saveUser(req.body);
-    res.status(response[1]).json(response[0]);
-}));
-router.post("/sign-in", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield user_service_1.UserService.logIn(req.body);
-    res.status(response[1]).json(response[0]);
-}));
-exports.default = router;
-//# sourceMappingURL=user.controller.js.map
+exports.ConfirmationTokenService = void 0;
+class ConfirmationTokenService {
+    static save() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+}
+exports.ConfirmationTokenService = ConfirmationTokenService;
+//# sourceMappingURL=confirmation-token.service.js.map
