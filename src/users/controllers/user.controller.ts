@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { UserService } from "../services/user.service";
-import { HTTP_STATUS } from "../utils/http-status.enum";
-import { User } from "../models/user.model";
+import { HTTP_STATUS } from "../../shared/utils/http-status.enum";
 
 const router: Router = Router();
 

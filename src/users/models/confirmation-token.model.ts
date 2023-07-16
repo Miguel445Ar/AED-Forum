@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { IQueryable } from "../utils/queryable.interface";
+import { IQueryable } from "../../shared/utils/queryable.interface";
 
 export class ConfirmationToken implements IQueryable {
     private readonly token: string;

@@ -1,4 +1,4 @@
-import dbConnection from "../db/dbConnection";
+import dbConnection from "../../shared/db/dbConnection";
 import { User } from "../models/user.model";
 import { BaseRepository } from "./base-repository.repository";
 

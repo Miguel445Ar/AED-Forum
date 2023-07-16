@@ -1,5 +1,5 @@
-import dbConnection from "../db/dbConnection";
-import { IQueryable } from "../utils/queryable.interface";
+import dbConnection from "../../shared/db/dbConnection";
+import { IQueryable } from "../../shared/utils/queryable.interface";
 
 export class BaseRepository<T extends IQueryable> {
     constructor(private readonly tableName: string) {}

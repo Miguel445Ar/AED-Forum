@@ -1,4 +1,4 @@
-import { IQueryable } from "../utils/queryable.interface";
+import { IQueryable } from "../../shared/utils/queryable.interface";
 import { USER_ROLE } from "../utils/user-role";
 
 export class User implements IQueryable {
@@ -10,7 +10,7 @@ export class User implements IQueryable {
         private _role: USER_ROLE
     ) {}
     public toQuery(): string {
-        return `VALUES (${this._id}, ${this._username}, ${this._email}, ${this._password}, ${this._role})`;
+        return `VALUES (${this._id}, '${this._username}', '${this._email}', '${this._password}', '${this._role}')`;
     }
     public get id(): number { return this._id; }
     public get username(): string { return this._username; }

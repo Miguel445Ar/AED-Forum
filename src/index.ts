@@ -2,10 +2,9 @@ import express from "express";
 import * as core from "express-serve-static-core";
 import dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
-import EmailController from "./controllers/email.controller";
-import { Person } from "./proto-models/user_pb";
-import UserController from "./controllers/user.controller";
-import { auth } from "./middlewares/user-auth.middleware";
+import EmailController from "./users/controllers/email.controller";
+import UserController from "./users/controllers/user.controller";
+import { auth } from "./users/middlewares/user-auth.middleware";
 
 
 const app: core.Express = express();
@@ -21,11 +20,11 @@ app.get("/", (req, res) => {
     res.status(201).send("Hello world");
 });
 
-app.get("/users", (req, res) => {
-    const user: Person = new Person({ id: 1, userName: "Miguel"});
-    const data: Uint8Array = user.toBinary();
-    res.type("binary").send(data);
-})
+// app.get("/users", (req, res) => {
+//     const user: Person = new Person({ id: 1, userName: "Miguel"});
+//     const data: Uint8Array = user.toBinary();
+//     res.type("binary").send(data);
+// })
 
 app.use("/users", UserController);
 

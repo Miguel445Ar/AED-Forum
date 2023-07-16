@@ -31,8 +31,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = require("../models/user.model");
 const user_respository_1 = require("../repositories/user.respository");
 const user_response_1 = require("../resources/response/user.response");
@@ -48,8 +52,9 @@ class UserService {
             }
             const newIdQueryResult = yield user_respository_1.UserRepository.getNewId();
             const newId = newIdQueryResult[0][0]['NEW_ID'];
-            const userWithSameEmail = yield user_respository_1.UserRepository.getUserByEmail(request.email);
-            if (userWithSameEmail == null) {
+            const queryResult = yield user_respository_1.UserRepository.getUserByEmail(request.email);
+            const usersWithSameEmail = queryResult[0];
+            if (usersWithSameEmail.length > 0) {
                 response.addError("Email already exists");
                 return [response.toDto(), http_status_enum_1.HTTP_STATUS.BAD_REQUEST];
             }
@@ -57,7 +62,7 @@ class UserService {
             const encriptedPassword = b.hashSync(user.password, 2);
             user.password = encriptedPassword;
             const result = yield user_respository_1.UserRepository.saveUser(user);
-            return [new user_response_1.UserResponse(user.id, user.username, user.email, user.password, user.role), http_status_enum_1.HTTP_STATUS.OK];
+            return [new user_response_1.UserResponse(user.id, user.username, user.email, user.password, user.role), http_status_enum_1.HTTP_STATUS.CREATED];
         });
     }
     static logIn(request) {
@@ -67,7 +72,12 @@ class UserService {
             if (user.length === 0) {
                 return [{ message: "User with given email does not exist" }, http_status_enum_1.HTTP_STATUS.BAD_REQUEST];
             }
-            return [{ user }, http_status_enum_1.HTTP_STATUS.OK];
+            const passwordMatches = yield b.compare(request.password, user[0].password);
+            if (!passwordMatches) {
+                return [{ message: "Given password does not match" }, http_status_enum_1.HTTP_STATUS.BAD_REQUEST];
+            }
+            const token = jsonwebtoken_1.default.sign({ id: user[0].id, email: user[0].email, createdAt: new Date().getTime() }, process.env.API_SECRET, { expiresIn: "7d" });
+            return [{ user: user[0], token }, http_status_enum_1.HTTP_STATUS.OK];
         });
     }
 }
