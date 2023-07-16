@@ -3,7 +3,7 @@ import { User } from "../models/user.model";
 import { UserRepository } from "../repositories/user.respository";
 import { UserRequest } from "../resources/request/user.request";
 import { UserResponse } from "../resources/response/user.response";
-import { CustomResponse } from "../utils/custom-response";
+import { CustomResponse } from "../../shared/utils/custom-response";
 import { HTTP_STATUS } from "../../shared/utils/http-status.enum";
 import { UserRequestValidator } from "../validators/user-request.validator";
 import * as b from "bcrypt";

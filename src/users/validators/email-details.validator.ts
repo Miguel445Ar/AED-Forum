@@ -1,6 +1,6 @@
 import { EmailDetailsRequest } from "../resources/request/email-details.request";
 import { EmailDetailsResponse } from "../resources/response/email-details.response";
-import { CustomResponse } from "../utils/custom-response";
+import { CustomResponse } from "../../shared/utils/custom-response";
 
 export class EmailDetailsValidator {
     public static validate(request: EmailDetailsRequest): CustomResponse<EmailDetailsResponse> {

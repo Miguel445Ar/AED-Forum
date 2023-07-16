@@ -1,6 +1,6 @@
 import { UserRequest } from "../resources/request/user.request";
 import { UserResponse } from "../resources/response/user.response";
-import { CustomResponse } from "../utils/custom-response";
+import { CustomResponse } from "../../shared/utils/custom-response";
 import { USER_ROLE } from "../utils/user-role";
 
 export abstract class UserRequestValidator {

@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from "express";
 import jwt from "jsonwebtoken";
-import { HTTP_STATUS } from "../utils/http-status.enum";
+import { HTTP_STATUS } from "../../shared/utils/http-status.enum";
 
 export interface CustomRequest extends Request {
     token: string | jwt.JwtPayload;

@@ -1,7 +1,7 @@
 import { createTransport } from 'nodemailer';
 import { EmailDetailsRequest } from '../resources/request/email-details.request';
 import { EmailDetailsResponse } from '../resources/response/email-details.response';
-import { CustomResponse } from '../utils/custom-response';
+import { CustomResponse } from '../../shared/utils/custom-response';
 import { HTTP_STATUS } from '../../shared/utils/http-status.enum';
 import { EmailDetailsValidator } from '../validators/email-details.validator';
 
