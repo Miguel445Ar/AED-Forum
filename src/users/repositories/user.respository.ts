@@ -1,6 +1,6 @@
 import dbConnection from "../../shared/db/dbConnection";
 import { User } from "../models/user.model";
-import { BaseRepository } from "./base-repository.repository";
+import { BaseRepository } from "../../shared/repositories/base-repository.repository";
 
 
 export abstract class UserRepository {

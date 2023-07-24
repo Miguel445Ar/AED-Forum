@@ -4,6 +4,7 @@ import dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-
 dotenv.config();
 import EmailController from "./users/controllers/email.controller";
 import UserController from "./users/controllers/user.controller";
+import ConfirmationTokenController from "./users/controllers/confirmation-token.controller";
 import { auth } from "./users/middlewares/user-auth.middleware";
 
 
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 // })
 
 app.use("/users", UserController);
+app.use("/confirmation-tokens", ConfirmationTokenController);
 
 app.post("/email", auth, EmailController.sendMailToAdmin);
 

@@ -6,6 +6,7 @@ export class UserResponse {
         public username: string,
         public email: string,
         public password: string,
-        public role: USER_ROLE
+        public role: USER_ROLE,
+        public enabled: boolean
     ) {}
 }

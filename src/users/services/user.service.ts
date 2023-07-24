@@ -9,6 +9,7 @@ import { UserRequestValidator } from "../validators/user-request.validator";
 import * as b from "bcrypt";
 import { RowDataPacket } from "mysql2";
 import { UserAuthRequest } from "../resources/request/user-auth.request";
+import { ConfirmationTokenService } from "./confirmation-token.service";
 
 export class UserService {
     static async saveUser(request: UserRequest): Promise<[object, HTTP_STATUS]> {
@@ -28,13 +29,27 @@ export class UserService {
         const encriptedPassword = b.hashSync(user.password, 2);
         user.password = encriptedPassword;
         const result = await UserRepository.saveUser(user);
-        return [new UserResponse(user.id, user.username, user.email, user.password, user.role), HTTP_STATUS.CREATED];
+        const userResponse: UserResponse = new UserResponse(
+            user.id,
+            user.username,
+            user.email,
+            user.password,
+            user.role,
+            user.enabled
+        );
+        // Create confirmation token
+        const confirmationToken: string = await ConfirmationTokenService.createConfirmationTokenByUserId(user.id)[0];
+
+        return [{ user: userResponse, token: confirmationToken }, HTTP_STATUS.CREATED];
     }
     static async logIn(request: UserAuthRequest): Promise<[object, HTTP_STATUS]> {
         let result: RowDataPacket[][] = await UserRepository.getUserByEmail(request.email);
         let user: UserResponse[] = result[0] as UserResponse[];
         if(user.length === 0) {
             return [{ message: "User with given email does not exist" }, HTTP_STATUS.BAD_REQUEST];
+        }
+        if(!user[0].enabled) {
+            return [{ message: "User account has not been confirmed yet" }, HTTP_STATUS.BAD_REQUEST];
         }
         const passwordMatches: boolean = await b.compare(request.password, user[0].password);
         if(!passwordMatches) {

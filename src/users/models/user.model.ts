@@ -7,7 +7,8 @@ export class User implements IQueryable {
         private _username: string,
         private _email: string,
         private _password: string,
-        private _role: USER_ROLE
+        private _role: USER_ROLE,
+        private _enabled: boolean = false
     ) {}
     public toQuery(): string {
         return `VALUES (${this._id}, '${this._username}', '${this._email}', '${this._password}', '${this._role}')`;
@@ -17,6 +18,8 @@ export class User implements IQueryable {
     public get email(): string { return this._email; }
     public get password(): string { return this._password; }
     public get role(): USER_ROLE { return this._role; }
+    public get enabled(): boolean { return this._enabled; }
+    public set enabled(enabled: boolean) { this._enabled = enabled; }
     public getPayload(): object {
         return {
             id: this._id
