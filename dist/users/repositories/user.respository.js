@@ -8,17 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const user_model_1 = require("../models/user.model");
 const typeorm_1 = require("typeorm");
-const entity_manager_1 = __importDefault(require("../../shared/db/entity-manager"));
+const dbConnection_1 = require("../../shared/db/dbConnection");
 class UserRepository extends typeorm_1.Repository {
     constructor() {
-        super(user_model_1.User, entity_manager_1.default.getEntityManager());
+        super(user_model_1.User, new typeorm_1.EntityManager(dbConnection_1.datasource));
     }
     findByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {

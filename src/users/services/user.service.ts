@@ -63,4 +63,17 @@ export abstract class UserService {
         );
         return [{ user: currentUser, token }, HTTP_STATUS.OK];
     }
+    static async verifyConfirmationToken(token: string): Promise<[object, HTTP_STATUS]> {
+        interface UserPayload extends jwt.JwtPayload {
+            id: number;
+            email: string;
+            createdAt: Date
+        };
+        const userPayload: (UserPayload | null) = jwt.decode(token) as UserPayload;
+        if(userPayload === null) { 
+            return [{ message: "Invalid JWT token"}, HTTP_STATUS.BAD_REQUEST];
+        }
+        // TODO: Verify claims
+        return [{ message: "Account successfully confirmed" }, HTTP_STATUS.OK];
+    }
 }

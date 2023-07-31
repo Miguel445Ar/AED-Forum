@@ -9,12 +9,10 @@ import ConfirmationTokenController from "./users/controllers/confirmation-token.
 import { auth } from "./users/middlewares/user-auth.middleware";
 import getDataSource from "./shared/db/dbConnection";
 import { DataSource } from "typeorm";
-import dataBaseConfigService from "./shared/db/entity-manager";
 
 
 // Datasource config
 getDataSource().then( (datasource: DataSource) => {
-    dataBaseConfigService.setEntityManager(datasource);
     const app: core.Express = express();
     const PORT: number = parseInt(process.env.SERVER_PORT, null);
     app.use(express.json());

@@ -1,11 +1,11 @@
 import { User } from "../models/user.model";
-import { Repository } from "typeorm";
-import dataBaseConfigService from "../../shared/db/entity-manager";
+import { EntityManager, Repository } from "typeorm";
+import { datasource } from "../../shared/db/dbConnection";
 
 
 export class UserRepository extends Repository<User> {
     constructor() {
-        super(User, dataBaseConfigService.getEntityManager());
+        super(User, new EntityManager(datasource));
     }
 
     public async findByEmail(email: string) {

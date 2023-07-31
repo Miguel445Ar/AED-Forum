@@ -86,6 +86,17 @@ class UserService {
             return [{ user: currentUser, token }, http_status_enum_1.HTTP_STATUS.OK];
         });
     }
+    static verifyConfirmationToken(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ;
+            const userPayload = jsonwebtoken_1.default.decode(token);
+            if (userPayload === null) {
+                return [{ message: "Invalid JWT token" }, http_status_enum_1.HTTP_STATUS.BAD_REQUEST];
+            }
+            // TODO: Verify claims
+            return [{ message: "Account successfully confirmed" }, http_status_enum_1.HTTP_STATUS.OK];
+        });
+    }
 }
 exports.UserService = UserService;
 UserService.userRepository = new user_respository_1.UserRepository();
