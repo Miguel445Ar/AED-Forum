@@ -10,56 +10,57 @@ import * as b from "bcrypt";
 import { RowDataPacket } from "mysql2";
 import { UserAuthRequest } from "../resources/request/user-auth.request";
 import { ConfirmationTokenService } from "./confirmation-token.service";
+import { USER_ROLE } from "../utils/user-role";
+import { UserAuthRequestValidator } from "../validators/user-auth-request.validator";
 
-export class UserService {
+export abstract class UserService {
+    private static userRepository: UserRepository = new UserRepository();
     static async saveUser(request: UserRequest): Promise<[object, HTTP_STATUS]> {
-        const response: CustomResponse<UserResponse> = UserRequestValidator.validate(request);
-        if(response.hasErrors()) {
-            return [response.toDto(), HTTP_STATUS.BAD_REQUEST];
+        const errorResponse: CustomResponse<UserResponse> = UserRequestValidator.validate(request);
+        if(errorResponse.hasErrors()) {
+            return [errorResponse.toDto(), HTTP_STATUS.BAD_REQUEST];
         }
-        const newIdQueryResult: object = await UserRepository.getNewId();
-        const newId: (number | null) = newIdQueryResult[0][0]['NEW_ID'];
-        const queryResult: RowDataPacket[][] = await UserRepository.getUserByEmail(request.email);
-        const usersWithSameEmail = queryResult[0] as UserResponse[];
-        if(usersWithSameEmail.length > 0) {
-            response.addError("Email already exists");
-            return [response.toDto(), HTTP_STATUS.BAD_REQUEST];
-        }
-        const user: User = new User((newId || 1),request.username, request.email, request.password, request.role);
-        const encriptedPassword = b.hashSync(user.password, 2);
-        user.password = encriptedPassword;
-        const result = await UserRepository.saveUser(user);
-        const userResponse: UserResponse = new UserResponse(
-            user.id,
-            user.username,
-            user.email,
-            user.password,
-            user.role,
-            user.enabled
-        );
-        // Create confirmation token
-        const confirmationToken: string = await ConfirmationTokenService.createConfirmationTokenByUserId(user.id)[0];
 
-        return [{ user: userResponse, token: confirmationToken }, HTTP_STATUS.CREATED];
+        const userWithSameEmail: User = await UserService.userRepository.findByEmail(request.email);
+
+        if(userWithSameEmail !== null) {
+            errorResponse.addError("Email already exists");
+            return [errorResponse.toDto(), HTTP_STATUS.BAD_REQUEST];
+        }
+
+        const user: User = await UserService.userRepository.save({
+            id: null,
+            email: request.email,
+            username: request.username,
+            password: b.hashSync(request.password, 2),
+            role: request.role,
+            enabled: false
+        } satisfies User);
+
+        return [{ user }, HTTP_STATUS.CREATED];
     }
     static async logIn(request: UserAuthRequest): Promise<[object, HTTP_STATUS]> {
-        let result: RowDataPacket[][] = await UserRepository.getUserByEmail(request.email);
-        let user: UserResponse[] = result[0] as UserResponse[];
-        if(user.length === 0) {
+        const errorResponse: CustomResponse<UserResponse> = UserAuthRequestValidator.validate(request);
+        if(errorResponse.hasErrors()) {
+            return [errorResponse.toDto(), HTTP_STATUS.BAD_REQUEST];
+        }
+
+        const currentUser: User = await UserService.userRepository.findByEmail(request.email);
+        if(currentUser === null) {
             return [{ message: "User with given email does not exist" }, HTTP_STATUS.BAD_REQUEST];
         }
-        if(!user[0].enabled) {
+        if(!currentUser.enabled) {
             return [{ message: "User account has not been confirmed yet" }, HTTP_STATUS.BAD_REQUEST];
         }
-        const passwordMatches: boolean = await b.compare(request.password, user[0].password);
+        const passwordMatches: boolean = await b.compare(request.password, currentUser.password);
         if(!passwordMatches) {
             return [{ message: "Given password does not match" }, HTTP_STATUS.BAD_REQUEST];
         }
         const token: string = jwt.sign(
-            { id: user[0].id, email: user[0].email, createdAt: new Date().getTime() }, 
+            { id: currentUser.id, email: currentUser.email, createdAt: new Date().getTime() }, 
             process.env.API_SECRET,
             { expiresIn: "7d" }
         );
-        return [{ user: user[0], token }, HTTP_STATUS.OK];
+        return [{ user: currentUser, token }, HTTP_STATUS.OK];
     }
 }

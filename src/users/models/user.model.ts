@@ -1,31 +1,34 @@
-import { IQueryable } from "../../shared/utils/queryable.interface";
+import { Column, Entity, PrimaryGeneratedColumn, Table } from "typeorm";
 import { USER_ROLE } from "../utils/user-role";
-
-export class User implements IQueryable {
-    constructor(
-        private _id: number,
-        private _username: string,
-        private _email: string,
-        private _password: string,
-        private _role: USER_ROLE,
-        private _enabled: boolean = false
-    ) {}
-    public toQuery(): string {
-        return `VALUES (${this._id}, '${this._username}', '${this._email}', '${this._password}', '${this._role}')`;
-    }
-    public get id(): number { return this._id; }
-    public get username(): string { return this._username; }
-    public get email(): string { return this._email; }
-    public get password(): string { return this._password; }
-    public get role(): USER_ROLE { return this._role; }
-    public get enabled(): boolean { return this._enabled; }
-    public set enabled(enabled: boolean) { this._enabled = enabled; }
-    public getPayload(): object {
-        return {
-            id: this._id
-        }
-    }
-    public set password(password: string) {
-        this._password = password;
-    }
+@Entity({ name: "users"})
+export class User {
+    @PrimaryGeneratedColumn("increment")
+    id: number;
+    @Column({
+        length: 150
+    })
+    username: string;
+    @Column({
+        length: 255
+    })
+    email: string;
+    @Column({
+        length: 255
+    })
+    password: string;
+    @Column({
+        type: "enum",
+        enum: USER_ROLE,
+        default: USER_ROLE.ADMIN,
+        nullable: false,
+        update: false
+    })
+    role: USER_ROLE;
+    @Column({
+        nullable: false,
+        type: "bool",
+        name: "enabled",
+        update: true
+    })
+    enabled: boolean
 }
