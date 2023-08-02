@@ -30,5 +30,5 @@ export class User {
         name: "enabled",
         update: true
     })
-    enabled: boolean
+    enabled: boolean;
 }

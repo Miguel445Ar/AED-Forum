@@ -1,35 +1,25 @@
-import { randomUUID } from "crypto";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "./user.model";
 
+
+@Entity({ name: "confirmation_tokens"})
 export class ConfirmationToken {
-    private readonly id: number;
-    private readonly userId: string;
-    private readonly createdAt: Date;
-    private readonly token: string;
-    private readonly expirationDate: Date;
-    private confirmedDate: Date;
-    constructor(
-        id: number,
-        userId: string,
-        createdAt: Date,
-    ) {
-        this.id = id;
-        this.userId = userId;
-        this.createdAt = createdAt;
+    @PrimaryGeneratedColumn("increment")
+    id: number;
 
-        this.token = randomUUID();
-        this.expirationDate = new Date(this.createdAt.getTime() + 15*60000);
-        this.confirmedDate = null;
-    }
-    public toQuery(): string {
-        return `VALUES (${this.id}, ${this.token}, ${this.createdAt.toISOString()}, ${this.expirationDate.toISOString()}, ${this.confirmedDate.toISOString()}, ${this.userId});`;
-    }
-    public getId(): number {
-        return this.id;
-    }
-    public getToken(): string {
-        return this.token;
-    }
-    public getConfirmedDate(): (Date | null) {
-        return this.confirmedDate
-    }
+    @ManyToOne(type => User, { cascade: ["update"] })
+    @JoinColumn({ name: "user_id" })
+    user: User;
+
+    @CreateDateColumn({ name: "created_at", nullable: false })
+    createdAt: Date;
+
+    @Column({ length: 100 })
+    token: string;
+
+    @CreateDateColumn({ name: "expiration_date", nullable: false })
+    expirationDate: Date;
+
+    @UpdateDateColumn({ name: "confirmed_date", nullable: true })
+    confirmedDate?: Date;
 }

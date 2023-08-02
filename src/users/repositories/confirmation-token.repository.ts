@@ -1,10 +1,15 @@
 import { ConfirmationToken } from "../models/confirmation-token.model";
-import dbConnection from "../../shared/db/dbConnection";
-import { FieldPacket, RowDataPacket } from "mysql2";
+import { datasource } from "../../shared/db/dbConnection";
+import { EntityManager, Repository } from "typeorm";
 
-export class ConfirmationTokenRepository {
+export class ConfirmationTokenRepository extends Repository<ConfirmationToken> {
     constructor() {
-       
+       super(ConfirmationToken, new EntityManager(datasource));
     }
-  
+    public async getById(id: number): Promise<ConfirmationToken> {
+        return await this.findOneBy({ id });
+    }
+    public async getByToken(token: string): Promise<ConfirmationToken> {
+        return await this.findOneBy({ token });
+    }
 }

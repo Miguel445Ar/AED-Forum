@@ -16,6 +16,7 @@ getDataSource().then( (datasource: DataSource) => {
     const app: core.Express = express();
     const PORT: number = parseInt(process.env.SERVER_PORT, null);
     app.use(express.json());
+    app.set('view engine', 'ejs');
     app.use("/users", UserController);
     app.use("/confirmation-tokens", ConfirmationTokenController);
     app.post("/email", auth, EmailController.sendMailToAdmin);

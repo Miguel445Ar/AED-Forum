@@ -14,9 +14,4 @@ router.post("/auth/sign-in", async (req, res) => {
     res.status(response[1]).json(response[0]);
 });
 
-router.get("/verification/:token", async (req, res) => {
-    const token: string = req.params.token;
-    
-});
-
 export default router;

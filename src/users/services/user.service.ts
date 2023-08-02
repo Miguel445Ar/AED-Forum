@@ -12,9 +12,13 @@ import { UserAuthRequest } from "../resources/request/user-auth.request";
 import { ConfirmationTokenService } from "./confirmation-token.service";
 import { USER_ROLE } from "../utils/user-role";
 import { UserAuthRequestValidator } from "../validators/user-auth-request.validator";
+import { readFileSync } from "fs";
+import { render } from "ejs";
+import emailService from "./email.service";
+import { EmailDetailsRequest } from "../resources/request/email-details.request";
 
 export abstract class UserService {
-    private static userRepository: UserRepository = new UserRepository();
+    public static userRepository: UserRepository = new UserRepository();
     static async saveUser(request: UserRequest): Promise<[object, HTTP_STATUS]> {
         const errorResponse: CustomResponse<UserResponse> = UserRequestValidator.validate(request);
         if(errorResponse.hasErrors()) {
@@ -37,7 +41,17 @@ export abstract class UserService {
             enabled: false
         } satisfies User);
 
-        return [{ user }, HTTP_STATUS.CREATED];
+        const [token, _] = await ConfirmationTokenService.createConfirmationTokenByUserId(user.id);
+        emailService.sendMail(
+            {
+                mailSender: "miguelangelcahuas@hotmail.com",
+                passwordSender: "miguelitocahuas",
+                subject: "Message",
+                description: this.renderEmailMessage(token)
+                
+            } satisfies EmailDetailsRequest
+        )
+        return [{ user, token }, HTTP_STATUS.CREATED];
     }
     static async logIn(request: UserAuthRequest): Promise<[object, HTTP_STATUS]> {
         const errorResponse: CustomResponse<UserResponse> = UserAuthRequestValidator.validate(request);
@@ -75,5 +89,10 @@ export abstract class UserService {
         }
         // TODO: Verify claims
         return [{ message: "Account successfully confirmed" }, HTTP_STATUS.OK];
+    }
+    static renderEmailMessage(token: string): string {
+        const file = readFileSync(`${__dirname}/static/email-message.ejs`, 'ascii');
+        const renderedFile = render(file, { link: `http://localhost:8090/confirmation-tokens/account-verification/${token}` })
+        return renderedFile;
     }
 }

@@ -1,6 +1,7 @@
 import { createConnection, Connection} from "mysql2/promise";
 import { DataSource } from "typeorm";
 import { User } from "../../users/models/user.model";
+import { ConfirmationToken } from "../../users/models/confirmation-token.model";
 
 export const datasource = new DataSource({
     type: "mysql",
@@ -9,7 +10,7 @@ export const datasource = new DataSource({
     username: process.env.MYSQL_DB_USER,
     password: process.env.MYSQL_DB_PASSWORD,
     database: process.env.MYSQL_DB_DATABASE,
-    entities: [User],
+    entities: [User, ConfirmationToken],
     synchronize: true,
     logging: false,
     dropSchema: false
