@@ -42,15 +42,15 @@ export abstract class UserService {
         } satisfies User);
 
         const [token, _] = await ConfirmationTokenService.createConfirmationTokenByUserId(user.id);
-        emailService.sendMail(
-            {
-                mailSender: "miguelangelcahuas@hotmail.com",
-                passwordSender: "miguelitocahuas",
-                subject: "Message",
-                description: this.renderEmailMessage(token)
+        // emailService.sendMail(
+        //     {
+        //         mailSender: "miguelangelcahuas@hotmail.com",
+        //         passwordSender: "miguelitocahuas",
+        //         subject: "Message",
+        //         description: this.renderEmailMessage(token)
                 
-            } satisfies EmailDetailsRequest
-        )
+        //     } satisfies EmailDetailsRequest
+        // );
         return [{ user, token }, HTTP_STATUS.CREATED];
     }
     static async logIn(request: UserAuthRequest): Promise<[object, HTTP_STATUS]> {
@@ -77,22 +77,13 @@ export abstract class UserService {
         );
         return [{ user: currentUser, token }, HTTP_STATUS.OK];
     }
-    static async verifyConfirmationToken(token: string): Promise<[object, HTTP_STATUS]> {
-        interface UserPayload extends jwt.JwtPayload {
-            id: number;
-            email: string;
-            createdAt: Date
-        };
-        const userPayload: (UserPayload | null) = jwt.decode(token) as UserPayload;
-        if(userPayload === null) { 
-            return [{ message: "Invalid JWT token"}, HTTP_STATUS.BAD_REQUEST];
-        }
-        // TODO: Verify claims
-        return [{ message: "Account successfully confirmed" }, HTTP_STATUS.OK];
-    }
     static renderEmailMessage(token: string): string {
         const file = readFileSync(`${__dirname}/static/email-message.ejs`, 'ascii');
-        const renderedFile = render(file, { link: `http://localhost:8090/confirmation-tokens/account-verification/${token}` })
+        const renderedFile = render(file, 
+            { 
+                link: `${process.env.SERVER_HOSTNAME}/confirmation-tokens/account-verification/${token}`
+            }
+        );
         return renderedFile;
     }
 }
